@@ -9,13 +9,13 @@ import pkg_resources
 def create_config(path):
     config = configparser.ConfigParser()
     config.add_section("DummyGate")
-    config.set("DummyGate", "host", "localhost")
+    config.set("DummyGate", "host", "0.0.0.0")
     config.set("DummyGate", "port", "5009")
     config.set("DummyGate", "protocol", "base:ProtocolBase")
     config.set("DummyGate", "gate", "base:DummyGate")
 
     config.add_section("WatchGate")
-    config.set("WatchGate", "host", "localhost")
+    config.set("WatchGate", "host", "0.0.0.0")
     config.set("WatchGate", "port", "5010")
     config.set("WatchGate", "protocol", "watch_protocol:WatchProtocol")
     config.set("WatchGate", "gate", "http_gate:HttpGate")
