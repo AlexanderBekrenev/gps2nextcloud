@@ -12,7 +12,7 @@ setup(
     license='MIT',
     author='Alexander Bekrenev',
     author_email='alexander.bekrenev@gmail.com',
-    description='Simple gate between TCP tracker sessions and NextCloud PhoneTrack',
+    description='Simple gate between TCP tracker sessions and Nextcloud PhoneTrack',
     long_description=open(join(dirname(__file__), 'README.md')).read(),
     entry_points={
         'console_scripts':

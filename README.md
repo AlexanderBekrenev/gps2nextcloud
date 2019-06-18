@@ -1,6 +1,6 @@
 Description
 ===========
-This is simple gate tcp server between GPS tracker devices and NextCloud PhoneTrack application (https://gitlab.com/eneiluj/phonetrack-oc).
+This is simple gate tcp server between GPS tracker devices and Nextcloud PhoneTrack application (https://gitlab.com/eneiluj/phonetrack-oc).
 
 Description of the protocols and work with the trackers borrowed from the project Traccar (https://traccar.org & https://github.com/traccar/traccar)
 
@@ -21,5 +21,5 @@ Install to system scheme: \
 Make initial install: \
 `sudo gps2nextcloud-install `
 
-Edit initial config file '/etc/gps2nextcloud/gps2nextcloud.ini' and change `YOUR_SESSION_TOKEN` to real token value from Nextcloud PhoneTrace application
+Edit initial config file '/etc/gps2nextcloud/gps2nextcloud.ini' and change Nextcloud server name and `YOUR_SESSION_TOKEN` to real token value from Nextcloud PhoneTrace application
 

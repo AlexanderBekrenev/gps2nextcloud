@@ -62,7 +62,7 @@ def create_daemon():
     create_config("/etc/gps2nextcloud/gps2nextcloud.ini")
     print("Created initial config file '/etc/gps2nextcloud/gps2nextcloud.ini'")
     print("Please check and edit it.")
-    print("You need to change 'YOUR_SESSION_TOKEN' to real token value from Nextcloud PhoneTrace application.")
+    print("You need to change server address and 'YOUR_SESSION_TOKEN' to real token value from Nextcloud PhoneTrace application.")
     print("After that you can run daemon:")
     print(" systemctl start gps2nextcloud\n")
     print("To enable autostart of daemon:")

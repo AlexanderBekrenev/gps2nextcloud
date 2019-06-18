@@ -1,5 +1,5 @@
 [Unit]
-Description=GPS Trackers to NextCloud PhoheTrack TCP gate
+Description=GPS Trackers to Nextcloud PhoheTrack TCP gate
 After=multi-user.target
 [Service]
 Type=idle
