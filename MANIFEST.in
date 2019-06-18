@@ -1,1 +1,1 @@
-include trackers2nextcloud/data/*.service
+include gps2nextcloud/data/*.service
