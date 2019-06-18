@@ -8,7 +8,7 @@ setup(
     name='gps2nextcloud',
     version=gps2nextcloud.__version__,
     packages=find_packages(),
-    url='',
+    url='https://github.com/AlexanderBekrenev/gps2nextcloud',
     license='MIT',
     author='Alexander Bekrenev',
     author_email='alexander.bekrenev@gmail.com',
