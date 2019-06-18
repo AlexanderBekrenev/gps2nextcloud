@@ -1,8 +1,13 @@
 [Unit]
 Description=GPS Trackers to Nextcloud PhoheTrack TCP gate
 After=multi-user.target
+
 [Service]
 Type=idle
 ExecStart=/usr/bin/python3 {DAEMON_FILE} --config_file /etc/gps2nextcloud/gps2nextcloud.ini
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+
 [Install]
 WantedBy=multi-user.target
