@@ -6,8 +6,8 @@ from gps2nextcloud import base
 
 
 class WatchProtocol(base.ProtocolBase):
-    def __init__(self, selector, sock, addr, gate):
-        base.ProtocolBase.__init__(self, selector, sock, addr, gate)
+    def __init__(self, selector, sock, addr, gate, log_all_messages):
+        base.ProtocolBase.__init__(self, selector, sock, addr, gate, log_all_messages)
 
     def process_message(self):
         while self._recv_buffer:

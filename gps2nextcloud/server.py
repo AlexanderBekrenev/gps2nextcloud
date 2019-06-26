@@ -15,6 +15,7 @@ sel = selectors.DefaultSelector()
 multiprocessing.log_to_stderr()
 logger = multiprocessing.get_logger()
 logger.setLevel(logging.INFO)
+logAllMessages = False
 
 
 def accept_wrapper(sock, gate_class, protocol_class, cfg, section_name):
@@ -28,6 +29,8 @@ def accept_wrapper(sock, gate_class, protocol_class, cfg, section_name):
 
 def server_func(config_path, section_name):
     cfg = get_config(config_path)
+    global logAllMessages
+    logAllMessages = cfg.get('General', 'logAllMessages') == 'true'
     host = cfg.get(section_name, 'host')
     port = cfg.getint(section_name, 'port')
     gate_type = cfg.get(section_name, 'gate')
@@ -60,15 +63,17 @@ def server_func(config_path, section_name):
                     message = key.data
                     try:
                         message.process_events(mask)
+
                     except RuntimeError as ex:
                         if ex.__str__() != 'Peer closed.':
-                            logger.error(
-                                "main: error: exception for",
-                                f"{message.addr}:\n{ex}"
-                            )
-                        message.close()
+                            logger.error( "main: error: exception for s", message.addr,  exc_info=1)
+                        else:
+                            logger.info("connection closed %s", message.addr)
+
                     except ConnectionResetError:
-                        pass
+                        logger.info("connection reset error %s",  message.addr)
+                        message.close()
+
                     except Exception:
                         errmsg = "main: error: exception "
                         if message.addr:

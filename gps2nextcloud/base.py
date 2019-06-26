@@ -42,7 +42,9 @@ class DummyGate:
 
 
 class ProtocolBase:
-    def __init__(self, selector: selectors.BaseSelector, sock: socket.socket, addr, gate: DummyGate):
+    def __init__(self, selector: selectors.BaseSelector, sock: socket.socket, addr, gate: DummyGate,
+                 log_all_messages: bool):
+        self.log_all_messages = log_all_messages
         self.selector = selector
         self.sock = sock
         self.addr = addr
@@ -111,6 +113,9 @@ class ProtocolBase:
 
     def read(self):
         self._read()
+        if self.log_all_messages and self._recv_buffer:
+            logger.debug("received buffer: '%s'", self._recv_buffer.hex())
+
         self.process_message()
 
     def write(self):
@@ -143,6 +148,7 @@ class ProtocolBase:
 
     def process_message(self):
         # need to implement this method for real protocol
+
         # mark all data as processed
         return len(self._recv_buffer)
 
