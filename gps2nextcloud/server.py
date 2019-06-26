@@ -67,11 +67,15 @@ def server_func(config_path, section_name):
                                 f"{message.addr}:\n{ex}"
                             )
                         message.close()
+                    except ConnectionResetError:
+                        pass
                     except Exception:
-                        logger.exception(
-                            "main: error: exception for",
-                            f"{message.addr}:\n{traceback.format_exc()}"
-                        )
+                        errmsg = "main: error: exception "
+                        if message.addr:
+                            errmsg += message.addr
+                        errmsg += "\n"
+                        errmsg += traceback.format_exc()
+                        logger.exception(errmsg)
                         message.close()
     except KeyboardInterrupt:
         logger.info("caught keyboard interrupt, exiting")
