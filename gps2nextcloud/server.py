@@ -25,6 +25,7 @@ def accept_wrapper(sock, gate_class, protocol_class, cfg, section_name):
     gate = gate_class(cfg, section_name)
     protocol = protocol_class(sel, conn, addr, gate, logAllMessages)
     sel.register(conn, selectors.EVENT_READ, data=protocol)
+    return protocol
 
 
 def server_func(config_path, section_name):
@@ -58,7 +59,9 @@ def server_func(config_path, section_name):
             events = sel.select(timeout=None)
             for key, mask in events:
                 if key.data is None:
-                    accept_wrapper(key.fileobj, gate_class, protocol_class, cfg, section_name)
+                    message = accept_wrapper(key.fileobj, gate_class, protocol_class, cfg, section_name)
+                    if message:
+                        message.process_events(mask)
                 else:
                     message = key.data
                     try:
