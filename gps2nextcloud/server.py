@@ -23,7 +23,7 @@ def accept_wrapper(sock, gate_class, protocol_class, cfg, section_name):
     logger.info("accepted connection from %s", addr)
     conn.setblocking(False)
     gate = gate_class(cfg, section_name)
-    protocol = protocol_class(sel, conn, addr, gate)
+    protocol = protocol_class(sel, conn, addr, gate, logAllMessages)
     sel.register(conn, selectors.EVENT_READ, data=protocol)
 
 
