@@ -9,7 +9,7 @@ import pkg_resources
 def create_config(path):
     config = configparser.ConfigParser()
     config.add_section("General")
-    config.set("General", "logAllMessages", "false")
+    config.set("General", "logLevel", "INFO")
     config.add_section("DummyGate")
     config.set("DummyGate", "host", "0.0.0.0")
     config.set("DummyGate", "port", "5009")

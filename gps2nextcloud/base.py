@@ -32,6 +32,10 @@ class DummyGate:
     def __init__(self, cfg: configparser.ConfigParser, section_name: str):
         self._cfg = cfg
         self._cfg_section_name = section_name
+        global logger
+        log_level = cfg.get('General', 'logLevel')
+        if log_level:
+            logger.setLevel(log_level)
 
     def send_message(self, msg: TrackerMessage):
         """
@@ -42,9 +46,7 @@ class DummyGate:
 
 
 class ProtocolBase:
-    def __init__(self, selector: selectors.BaseSelector, sock: socket.socket, addr, gate: DummyGate,
-                 log_all_messages: bool):
-        self.log_all_messages = log_all_messages
+    def __init__(self, selector: selectors.BaseSelector, sock: socket.socket, addr, gate: DummyGate):
         self.selector = selector
         self.sock = sock
         self.addr = addr
@@ -82,7 +84,7 @@ class ProtocolBase:
 
     def _write(self):
         if self._send_buffer:
-            print("sending", repr(self._send_buffer), "to", self.addr)
+            logger.debug("sending %s to %s", repr(self._send_buffer), self.addr)
             try:
                 # Should be ready to write
                 sent = self.sock.send(self._send_buffer)
@@ -113,8 +115,7 @@ class ProtocolBase:
 
     def read(self):
         self._read()
-        if self.log_all_messages and self._recv_buffer:
-            logger.debug("received buffer: '%s'", self._recv_buffer.hex())
+        logger.debug("received buffer: '%s'", self._recv_buffer.hex())
 
         self.process_message()
 
@@ -126,22 +127,17 @@ class ProtocolBase:
         self._write()
 
     def close(self):
-        print("closing connection to", self.addr)
+        logger.info("closing connection to %s", self.addr)
+        # noinspection PyBroadException
         try:
             self.selector.unregister(self.sock)
-        except Exception as e:
-            print(
-                f"error: selector.unregister() exception for",
-                f"{self.addr}: {repr(e)}",
-            )
+        except Exception:
+            logger.error("error: selector.unregister() exception for %s", self.addr, exc_info=1)
 
         try:
             self.sock.close()
-        except OSError as e:
-            print(
-                f"error: socket.close() exception for",
-                f"{self.addr}: {repr(e)}",
-            )
+        except OSError:
+            logger.error("error: socket.close() exception for %s", self.addr, exc_info=1)
         finally:
             # Delete reference to socket object for garbage collection
             self.sock = None

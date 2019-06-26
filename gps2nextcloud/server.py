@@ -15,23 +15,28 @@ sel = selectors.DefaultSelector()
 multiprocessing.log_to_stderr()
 logger = multiprocessing.get_logger()
 logger.setLevel(logging.INFO)
-logAllMessages = False
 
 
-def accept_wrapper(sock, gate_class, protocol_class, cfg, section_name):
+def accept_wrapper(sock: socket.socket, gate_class, protocol_class, cfg, section_name):
     conn, addr = sock.accept()  # Should be ready to read
     logger.info("accepted connection from %s", addr)
     conn.setblocking(False)
+    conn.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+    sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, 180)
+    sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 180)
+    sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 1)
+    conn.settimeout(600)
     gate = gate_class(cfg, section_name)
-    protocol = protocol_class(sel, conn, addr, gate, logAllMessages)
+    protocol = protocol_class(sel, conn, addr, gate)
     sel.register(conn, selectors.EVENT_READ, data=protocol)
-    return protocol
 
 
 def server_func(config_path, section_name):
     cfg = get_config(config_path)
-    global logAllMessages
-    logAllMessages = cfg.get('General', 'logAllMessages') == 'true'
+    global logger
+    log_level = cfg.get('General', 'logLevel')
+    if log_level:
+        logger.setLevel(log_level)
     host = cfg.get(section_name, 'host')
     port = cfg.getint(section_name, 'port')
     gate_type = cfg.get(section_name, 'gate')
@@ -59,32 +64,32 @@ def server_func(config_path, section_name):
             events = sel.select(timeout=None)
             for key, mask in events:
                 if key.data is None:
-                    message = accept_wrapper(key.fileobj, gate_class, protocol_class, cfg, section_name)
-                    if message:
-                        message.process_events(mask)
+                    accept_wrapper(key.fileobj, gate_class, protocol_class, cfg, section_name)
                 else:
-                    message = key.data
+                    protocol = key.data
+                    # noinspection PyBroadException
                     try:
-                        message.process_events(mask)
+                        protocol.process_events(mask)
 
                     except RuntimeError as ex:
                         if ex.__str__() != 'Peer closed.':
-                            logger.error( "main: error: exception for s", message.addr,  exc_info=1)
+                            logger.error("main: error: exception for s", protocol.addr,  exc_info=1)
                         else:
-                            logger.info("connection closed %s", message.addr)
+                            logger.info("connection closed %s", protocol.addr)
+                            protocol.close()
 
                     except ConnectionResetError:
-                        logger.info("connection reset error %s",  message.addr)
-                        message.close()
+                        logger.info("connection reset error %s",  protocol.addr)
+                        protocol.close()
 
                     except Exception:
                         errmsg = "main: error: exception "
-                        if message.addr:
-                            errmsg += message.addr
+                        if protocol.addr:
+                            errmsg += protocol.addr
                         errmsg += "\n"
                         errmsg += traceback.format_exc()
                         logger.exception(errmsg)
-                        message.close()
+                        protocol.close()
     except KeyboardInterrupt:
         logger.info("caught keyboard interrupt, exiting")
     finally:

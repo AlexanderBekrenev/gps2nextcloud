@@ -1,13 +1,20 @@
+import logging
+import multiprocessing
+
 import pytz as pytz
 from builtins import len, int
 from datetime import datetime
 
 from gps2nextcloud import base
 
+logger = multiprocessing.get_logger()
+logger.setLevel(logging.INFO)
+
 
 class WatchProtocol(base.ProtocolBase):
-    def __init__(self, selector, sock, addr, gate, log_all_messages):
-        base.ProtocolBase.__init__(self, selector, sock, addr, gate, log_all_messages)
+    def __init__(self, selector, sock, addr, gate):
+        base.ProtocolBase.__init__(self, selector, sock, addr, gate)
+        self.last_location = None
 
     def process_message(self):
         while self._recv_buffer:
@@ -28,7 +35,7 @@ class WatchProtocol(base.ProtocolBase):
             self.parse_message(msg)
 
     def parse_message(self, msg):
-        print("parsing", msg)
+        logger.debug("parsing '%s'", msg)
         splits = msg.split(sep="*", maxsplit=4)
         company = splits[0][1:]
         client_id = splits[1]
@@ -41,6 +48,10 @@ class WatchProtocol(base.ProtocolBase):
             return
         msg = WatchMessage(company, client_id, content)
         if msg.is_parsed:
+            if msg.location:
+                self.last_location = msg.location
+            else:
+                msg.location = self.last_location
             self.register_message(msg)
         else:
             self.send_and_terminate(None)
@@ -112,7 +123,7 @@ class WatchMessage(base.TrackerMessage):
                 index += 1
             self._is_parsed = True
         else:
-            print(f"Unknown command: {self._content}")
+            logger.error("Unknown command: '%s'", self._content)
         self._content = None
 
     @property
