@@ -13,10 +13,10 @@ Install
 Installation process described for Ubuntu 18.04
 
 Download archive file with latest version\
-https://github.com/AlexanderBekrenev/gps2nextcloud/raw/master/dist/gps2nextcloud-0.1.1.tar.gz
+https://github.com/AlexanderBekrenev/gps2nextcloud/raw/master/dist/gps2nextcloud-0.1.5.tar.gz
 
 Install to system scheme: \
-`sudo pip3 install --system gps2nextcloud-0.1.1.tar.gz`
+`sudo pip3 install --system gps2nextcloud-0.1.5.tar.gz`
 
 Make initial install: \
 `sudo gps2nextcloud-install `
