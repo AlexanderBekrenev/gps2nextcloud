@@ -73,19 +73,19 @@ def server_func(config_path, section_name):
 
                     except RuntimeError as ex:
                         if ex.__str__() != 'Peer closed.':
-                            logger.error("main: error: exception for s", protocol.addr,  exc_info=1)
+                            logger.error("main: error: exception for s", str(protocol.addr),  exc_info=1)
                         else:
-                            logger.info("connection closed %s", protocol.addr)
+                            logger.info("connection closed %s", str(protocol.addr))
                             protocol.close()
 
                     except ConnectionResetError:
-                        logger.info("connection reset error %s",  protocol.addr)
+                        logger.info("connection reset error %s",  str(protocol.addr))
                         protocol.close()
 
                     except Exception:
                         errmsg = "main: error: exception "
                         if protocol.addr:
-                            errmsg += protocol.addr
+                            errmsg += str(protocol.addr)
                         errmsg += "\n"
                         errmsg += traceback.format_exc()
                         logger.exception(errmsg)

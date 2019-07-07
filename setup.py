@@ -30,5 +30,5 @@ setup(
         'Programming Language :: Python :: 3.4',
     ],
     python_requires='>=3',
-    install_requires=['requests']
+    install_requires=['requests', 'numpy', 'scipy', 'pyproj']
 )

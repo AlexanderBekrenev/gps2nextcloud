@@ -7,6 +7,9 @@ import selectors
 import socket
 
 # logger = logging.getLogger("gate_base")
+from gps2nextcloud.mlateration import solve2, solve
+from gps2nextcloud.queryGlmMmap import query_glm_mmap
+
 logger = multiprocessing.get_logger()
 logger.setLevel(logging.INFO)
 
@@ -162,6 +165,21 @@ class GsmBaseStation:
         self.signal = signal
 
 
+class ExGsmBaseStation(GsmBaseStation):
+    def __init__(self, base_station: GsmBaseStation):
+        GsmBaseStation.__init__(self, base_station.mcc, base_station.mnc, base_station.lac, base_station.cell_id,
+                                base_station.signal)
+        self.longitude = 0.0
+        self.latitude = 0.0
+        self.tower_range = 0.0
+
+    def calculate_location(self):
+        lat, lon, rng = query_glm_mmap(self.mcc, self.mnc, self.lac, self.cell_id)
+        self.latitude = lat
+        self.longitude = lon
+        self.tower_range = rng
+
+
 class Location:
     def __init__(self):
         self.timestamp = datetime.datetime.utcnow()
@@ -178,11 +196,24 @@ class Location:
         self.gsm_stations = []
 
     def __str__(self):
-        response = f"{self.timestamp.strftime('%Y-%m-%d %H:%M:%S')} Fix:{self.locked_position} Lat:{self.latitude} Lon:{self.longitude}\n"\
-               + f"Alt:{self.altitude} Speed:{self.speed_ms}m/s Dir:{self.direction}\n" \
-               + f"Satellites:{self.satellites} GSM signal:{self.gsm_signal_percent}%\n"
+        response = f"{self.timestamp.strftime('%Y-%m-%d %H:%M:%S')} Fix:{self.locked_position} Lat:{self.latitude} Lon:{self.longitude}\n" \
+                   + f"Alt:{self.altitude} Speed:{self.speed_ms}m/s Dir:{self.direction}\n" \
+                   + f"Satellites:{self.satellites} GSM signal:{self.gsm_signal_percent}%\n"
         n = 1
         for b in iter(self.gsm_stations):
             response += f"Base{n}: MCC:{b.mcc} MNC:{b.mnc} {b.lac}.{b.cell_id} power:{b.signal}\n"
             n += 1
         return response
+
+    def calculate_position(self):
+        if self.satellites > 3:
+            return
+        if self.gsm_station_numbers < 3:
+            return
+        stations_ex = []
+        for sta in self.gsm_stations:
+            sta_ex = ExGsmBaseStation(sta)
+            sta_ex.calculate_location()
+            stations_ex.append(sta_ex)
+        lat, lon = solve(stations_ex)
+        print (f"{lat} {lon}")

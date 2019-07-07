@@ -109,7 +109,7 @@ class WatchMessage(base.TrackerMessage):
             mcc = int(splits[19])
             mnc = int(splits[20])
             index = 21
-            while index +3 < len(splits):
+            while index + 3 < len(splits):
                 self.location.gsm_stations.append(base.GsmBaseStation(mcc, mnc,
                                                                       int(splits[index]),
                                                                       int(splits[index+1]),
@@ -122,6 +122,8 @@ class WatchMessage(base.TrackerMessage):
                 self.attributes["accuracy"] = float(splits[index])  # accuracy?
                 index += 1
             self._is_parsed = True
+            self.location.calculate_position()
+
         else:
             logger.error("Unknown command: '%s'", self._content)
         self._content = None
