@@ -7,7 +7,7 @@ import selectors
 import socket
 
 # logger = logging.getLogger("gate_base")
-from gps2nextcloud.mlateration import solve2, solve
+#from mlateration import solve
 from gps2nextcloud.queryGlmMmap import query_glm_mmap
 
 logger = multiprocessing.get_logger()
@@ -210,10 +210,10 @@ class Location:
             return
         if self.gsm_station_numbers < 3:
             return
-        stations_ex = []
-        for sta in self.gsm_stations:
-            sta_ex = ExGsmBaseStation(sta)
-            sta_ex.calculate_location()
-            stations_ex.append(sta_ex)
-        lat, lon = solve(stations_ex)
-        print (f"{lat} {lon}")
+#        stations_ex = []
+#        for sta in self.gsm_stations:
+#            sta_ex = ExGsmBaseStation(sta)
+#            sta_ex.calculate_location()
+#            stations_ex.append(sta_ex)
+#        lat, lon = solve(stations_ex)
+#        print (f"{lat} {lon}")
