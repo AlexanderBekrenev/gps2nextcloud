@@ -58,4 +58,4 @@ Check daemon status: `systemctl status gps2nextcloud`
 Changes
 -------
 
-Change file (CHANGES.md)
+[Change file](CHANGES.md)
