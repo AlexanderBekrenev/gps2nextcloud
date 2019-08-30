@@ -43,8 +43,19 @@ StandardError=syslog
 WantedBy=multi-user.target
 ```
 Check ExecStart line for your paths.
+
 Start daemon: `systemctl start gps2nextcloud`
+
 Enable daemon `systemctl enable gps2nextcloud`
+
 Stop daemon: `systemctl stop gps2nextcloud`
+
 Disable daemon `systemctl disable gps2nextcloud`
+
 Check daemon status: `systemctl status gps2nextcloud`
+
+
+Changes
+-------
+
+Change file (CHANGES.md)
