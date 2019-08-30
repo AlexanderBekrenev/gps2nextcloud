@@ -5,7 +5,7 @@ import pytz as pytz
 from builtins import len, int
 from datetime import datetime
 
-from gps2nextcloud import base
+import base
 
 logger = multiprocessing.get_logger()
 logger.setLevel(logging.INFO)
@@ -120,7 +120,7 @@ class H02Message(base.TrackerMessage):
     def parse_v1(self, splits):
         self._is_parsed = False
         self.location = base.Location()
-        self.location.timestamp = datetime.strptime(f"{splits[11]} {splits[3]}", "%d%m%y %H%M%S") \
+        self.location.timestamp = datetime.strptime("{} {}".format(splits[11], splits[3]), "%d%m%y %H%M%S") \
             .replace(tzinfo=pytz.utc)
         self.location.locked_position = splits[4] == 'A'
         latitude = splits[5]
@@ -184,7 +184,7 @@ class H02Message(base.TrackerMessage):
         time = "".join("{:02x}".format(c) for c in buf[6:9])
         date = "".join("{:02x}".format(c) for c in buf[9:12])
         self.location = base.Location()
-        self.location.timestamp = datetime.strptime(f"{date} {time}", "%d%m%y %H%M%S") \
+        self.location.timestamp = datetime.strptime("{} {}".format(date, time), "%d%m%y %H%M%S") \
             .replace(tzinfo=pytz.utc)
         latitude = "".join("{:02x}".format(c) for c in buf[12:16])
         self.location.latitude = float(latitude[:2]) + (float(latitude[2:4] + '.' + latitude[4:]) / 60)
@@ -210,7 +210,7 @@ class H02Message(base.TrackerMessage):
         time = "".join("{:02x}".format(c) for c in buf[6:9])
         date = "".join("{:02x}".format(c) for c in buf[9:12])
         self.location = base.Location()
-        self.location.timestamp = datetime.strptime(f"{date} {time}", "%d%m%y %H%M%S") \
+        self.location.timestamp = datetime.strptime("{} {}".format(date, time), "%d%m%y %H%M%S") \
             .replace(tzinfo=pytz.utc)
         latitude = "".join("{:02x}".format(c) for c in buf[12:16])
         self.location.latitude = float(latitude[:2]) + (float(latitude[2:3] + '.' + latitude[4:]) / 60)

@@ -30,7 +30,7 @@ def create_config(path):
 def get_config(path):
     if not os.path.exists(path):
         # create_config(path)
-        print(f"Config file '{path}' does not exist.")
+        print("Config file '{}' does not exist.".format(path))
         exit(-3)
 
     config = configparser.ConfigParser()

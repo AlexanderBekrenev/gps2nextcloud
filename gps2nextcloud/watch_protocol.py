@@ -5,7 +5,7 @@ import pytz as pytz
 from builtins import len, int
 from datetime import datetime
 
-from gps2nextcloud import base
+import base
 
 logger = multiprocessing.get_logger()
 logger.setLevel(logging.INFO)
@@ -44,7 +44,7 @@ class WatchProtocol(base.ProtocolBase):
         l1 = len(content)
         l2 = int(content_len, base=16)
         if l1 != l2:
-            self.send_and_terminate(f"wrong content length. real:{l1} reported:{l2}".encode('utf8'))
+            self.send_and_terminate("wrong content length. real:{} reported:{}".format(l1, l2).encode('utf8'))
             return
         msg = WatchMessage(company, client_id, content)
         if msg.is_parsed:
@@ -85,7 +85,7 @@ class WatchMessage(base.TrackerMessage):
         elif self._command == "UD" or self._command == "UD2":
             # example UD,220414,134652,A,22.571707,N,113.8613968,E,0.1,0.0,100,7,60,90,1000,50,0000,4,1,460,0,9360,4082,131,9360,4092,148,9360,4091,143,9360,4153,141
             self.location = base.Location()
-            self.location.timestamp = datetime.strptime(f"{splits[1]} {splits[2]}", "%d%m%y %H%M%S")\
+            self.location.timestamp = datetime.strptime("{} {}".format(splits[1], splits[2]), "%d%m%y %H%M%S")\
                 .replace(tzinfo=pytz.utc)
             self.location.locked_position = splits[3] == 'A'
             self.location.latitude = float(splits[4])
@@ -139,7 +139,7 @@ class WatchMessage(base.TrackerMessage):
             self._content = self.build_reply_content()
             if self._content is None:
                 return None
-        buf = f"[{self.attributes['company']}*{self.id}*{len(self._content)}*{self._content}]"
+        buf = "[{}*{}*{}*{}]".format(self.attributes['company'], self.id, len(self._content), self._content)
         return buf.encode('utf8')
 
     def build_reply_content(self):

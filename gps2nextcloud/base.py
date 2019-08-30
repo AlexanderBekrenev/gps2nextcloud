@@ -8,7 +8,7 @@ import socket
 
 # logger = logging.getLogger("gate_base")
 #from mlateration import solve
-from gps2nextcloud.queryGlmMmap import query_glm_mmap
+from queryGlmMmap import query_glm_mmap
 
 logger = multiprocessing.get_logger()
 logger.setLevel(logging.INFO)
@@ -22,13 +22,13 @@ class TrackerMessage:
         self.forward = True
 
     def print_me(self):
-        print(f"client: {self.id}")
+        print("client: {}".format(self.id))
         print("location:")
         print(self.location)
         print(self.attributes)
 
     def __str__(self):
-        return f"client_id: {self.id} {self.location} {self.attributes}"
+        return "client_id: {} {} {}".format(self.id, self.location, self.attributes)
 
 
 class DummyGate:
@@ -69,7 +69,7 @@ class ProtocolBase:
         elif mode == "rw":
             events = selectors.EVENT_READ | selectors.EVENT_WRITE
         else:
-            raise ValueError(f"Invalid events mask mode {repr(mode)}.")
+            raise ValueError("Invalid events mask mode {}.".format(repr(mode)))
         self.selector.modify(self.sock, events, data=self)
 
     def _read(self):
@@ -196,12 +196,12 @@ class Location:
         self.gsm_stations = []
 
     def __str__(self):
-        response = f"{self.timestamp.strftime('%Y-%m-%d %H:%M:%S')} Fix:{self.locked_position} Lat:{self.latitude} Lon:{self.longitude}\n" \
-                   + f"Alt:{self.altitude} Speed:{self.speed_ms}m/s Dir:{self.direction}\n" \
-                   + f"Satellites:{self.satellites} GSM signal:{self.gsm_signal_percent}%\n"
+        response = "{} Fix:{} Lat:{} Lon:{}\n".format(self.timestamp.strftime('%Y-%m-%d %H:%M:%S'), self.locked_position, self.latitude, self.longitude) \
+                   + "Alt:{} Speed:{}m/s Dir:{}\n".format(self.altitude, self.speed_ms, self.direction) \
+                   + "Satellites:{} GSM signal:{}%\n".format(self.satellites, self.gsm_signal_percent)
         n = 1
         for b in iter(self.gsm_stations):
-            response += f"Base{n}: MCC:{b.mcc} MNC:{b.mnc} {b.lac}.{b.cell_id} power:{b.signal}\n"
+            response += "Base{}: MCC:{} MNC:{} {}.{} power:{}\n".format(n, b.mcc, b.mnc, b.lac, b.cell_id, b.signal)
             n += 1
         return response
 

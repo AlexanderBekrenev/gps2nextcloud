@@ -9,7 +9,7 @@ import traceback
 from builtins import KeyboardInterrupt, Exception, RuntimeError, getattr, exit
 from multiprocessing import Process
 
-from gps2nextcloud.server_config import get_gate_sections, get_config, create_config, create_daemon
+from server_config import get_gate_sections, get_config, create_config, create_daemon
 
 sel = selectors.DefaultSelector()
 multiprocessing.log_to_stderr()
@@ -101,7 +101,7 @@ def run(config_path):
     try:
         gate_sections = get_gate_sections(config_path)
         for section in iter(gate_sections):
-            server = Process(target=server_func, name=f"gps2nextcloud_{section}", args=(config_path, section,))
+            server = Process(target=server_func, name="gps2nextcloud_{}".format(section), args=(config_path, section,))
             servers.append(server)
             server.start()
         for server in servers:

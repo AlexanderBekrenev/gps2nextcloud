@@ -5,7 +5,7 @@ import re
 
 import requests
 
-from gps2nextcloud.base import DummyGate
+from base import DummyGate
 
 
 logger = multiprocessing.get_logger()
@@ -35,7 +35,7 @@ class HttpGate(DummyGate):
                 .replace('{timestamp}', str(msg.location.timestamp.timestamp()))
 
         for p in iter(msg.attributes):
-            url = url.replace(f"{{{p}}}", str(msg.attributes[p]))
+            url = url.replace("{{{0}}}".format(p), str(msg.attributes[p]))
 
         # clean up unfilled parameters
         url = re.sub(r"[&?][^=]+={[^}]+}", "", url)
