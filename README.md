@@ -59,10 +59,10 @@ If you already have gps2nextcloud installed and working and you want to update t
 then you need to do the following:
 
 - Download new version (change x.x.x to version number)
-```shell script
+```sh
 wget https://github.com/AlexanderBekrenev/gps2nextcloud/raw/master/dist/gps2nextcloud-x.x.x.tar.gz
 ```
-- Uninstal old version
+- Uninstall old version
 ```shell script
 sudo pip3 uninstall gps2nextcloud
 ```

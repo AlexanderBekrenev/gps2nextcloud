@@ -91,7 +91,7 @@ class H02Protocol(base.ProtocolBase):
     def parse_bin_message(self, buf, imei):
         logger.debug("parsing '%s'", ":".join("{:02x}".format(c) for c in buf))
         msg = H02Message('--', imei)
-        if len(imei)<1:
+        if len(imei) < 1:
             imei = msg.parse_bin(buf)
         else:
             msg.parse_x(buf, imei)
@@ -189,7 +189,7 @@ class H02Message(base.TrackerMessage):
         latitude = "".join("{:02x}".format(c) for c in buf[12:16])
         self.location.latitude = float(latitude[:2]) + (float(latitude[2:4] + '.' + latitude[4:]) / 60)
         longitude = "".join("{:02x}".format(c) for c in buf[17:22])
-        self.location.longitude = float(longitude[:3]) + (float(longitude[3:5] + '.' + latitude[5:9]) / 60)
+        self.location.longitude = float(longitude[:3]) + (float(longitude[3:5] + '.' + longitude[5:9]) / 60)
         bits = int(longitude[9], 16)
         self.location.locked_position = bits & 0b0010
         if not bits & 0b0100:
@@ -215,7 +215,7 @@ class H02Message(base.TrackerMessage):
         latitude = "".join("{:02x}".format(c) for c in buf[12:16])
         self.location.latitude = float(latitude[:2]) + (float(latitude[2:3] + '.' + latitude[4:]) / 60)
         longitude = "".join("{:02x}".format(c) for c in buf[17:22])
-        self.location.longitude = float(longitude[:3]) + (float(longitude[3:4] + '.' + latitude[5:8]) / 60)
+        self.location.longitude = float(longitude[:3]) + (float(longitude[3:4] + '.' + longitude[5:8]) / 60)
         bits = int(latitude[9], 16)
         self.location.locked_position = bits & 0b0010
         if not bits & 0b0100:
