@@ -6,8 +6,7 @@ Description of the protocols and work with the trackers borrowed from the projec
 
 Protocols link: https://www.traccar.org/protocols/
 
-Currently implemented _watch_ protocol only.
-Version 0.1.8 has implementation for _H02_ protocol but it does not tested on real tracker.
+Currently implemented _watch_ and _H02_ protocol only.
 
 ### Install
 
